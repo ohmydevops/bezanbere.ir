@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بزن بره</title>
+  <meta name="description" content="اپ ساده تسک با محدودیت ۵ تسک. بدون حساب. آفلاین.">
+  <meta property="og:title" content="بزن بره">
+  <meta property="og:description" content="به جای مدیریت کارات، انجامشون بده.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#deb887">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <meta property="og:image" content="./logo.png">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body
+  x-data
+  x-init="$store.app.init()"
+  class="app-body">
+
+  <!-- App frame: phone-width on desktop, full-width on mobile -->
+  <div class="app-frame">
+
+  <!-- Header -->
+  <header class="app-header">
+    <h1 class="app-title" x-text="$store.app.t.appTitle"></h1>
+    <button
+      @click="$store.app.toggleTheme()"
+      class="theme-btn"
+      :aria-label="$store.app.t.themeToggle">
+      <!-- Moon (shown in light mode) -->
+      <svg x-show="$store.app.theme === 'light'" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+      </svg>
+      <!-- Sun (shown in dark mode) -->
+      <svg x-show="$store.app.theme === 'dark'" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 7a5 5 0 100 10A5 5 0 0012 7z"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- Task List -->
+  <main class="app-main">
+
+    <!-- Empty state -->
+    <div
+      x-show="$store.app.tasks.length === 0"
+      class="empty-state">
+      <p class="empty-title" x-text="$store.app.t.emptyTitle"></p>
+      <p class="empty-subtitle" x-text="$store.app.t.emptySubtitle"></p>
+    </div>
+
+    <!-- Tasks -->
+    <ul class="task-list">
+      <template x-for="task in $store.app.tasks" :key="task.id">
+        <li
+          x-data="{ startX: 0, dragX: 0 }"
+          x-transition:enter="transition ease-out duration-150"
+          x-transition:enter-start="opacity-0 -translate-y-1"
+          x-transition:enter-end="opacity-100 translate-y-0"
+          @touchstart.passive="startX = $event.touches[0].clientX"
+          @touchmove.passive="dragX = Math.max(0, $event.touches[0].clientX - startX)"
+          @touchend="if (dragX > 80) $store.app.deleteTask(task.id); dragX = 0"
+          :style="dragX > 0 ? `transform: translateX(${dragX}px); opacity: ${1 - dragX / 160}` : ''"
+          :class="$store.app.completing.includes(task.id) ? 'opacity-0' : 'opacity-100'"
+          class="task-card">
+
+          <!-- Complete button -->
+          <button
+            @click="$store.app.completeTask(task.id)"
+            class="task-check"
+            :aria-label="$store.app.t.completeTask">
+          </button>
+
+          <!-- Title -->
+          <span
+            :class="$store.app.completing.includes(task.id) ? 'line-through text-sand-400 dark:text-sand-600' : 'text-sand-900 dark:text-sand-100'"
+            class="task-title"
+            x-text="task.title">
+          </span>
+
+          <!-- Delete button -->
+          <button
+            @click="$store.app.deleteTask(task.id)"
+            class="task-delete"
+            :aria-label="$store.app.t.deleteTask">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </li>
+      </template>
+    </ul>
+
+    <!-- Blocked message -->
+    <div
+      x-show="$store.app.tasks.length >= 5"
+      x-transition
+      class="blocked-msg">
+      <span x-text="$store.app.t.blockedMessage"></span>
+    </div>
+
+  </main>
+
+  <!-- Floating Add Button (absolute within app frame) -->
+  <button
+    x-show="$store.app.tasks.length < 5"
+    x-transition:enter="transition ease-out duration-150"
+    x-transition:enter-start="opacity-0 scale-90"
+    x-transition:enter-end="opacity-100 scale-100"
+    @click="$store.app.openModal()"
+    class="fab"
+    :aria-label="$store.app.t.addTask">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" d="M12 4v16m-8-8h16"/>
+    </svg>
+  </button>
+
+  <!-- About button (mirrors FAB on the left) -->
+  <button @click="$store.app.about = true" class="about-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/><path stroke-linecap="round" d="M12 16v-4m0-4h.01"/>
+    </svg>
+    <span x-text="$store.app.t.aboutLink"></span>
+  </button>
+
+  </div><!-- /app frame -->
+
+  <!-- About Modal -->
+  <div
+    x-show="$store.app.about"
+    x-transition:enter="transition ease-out duration-150"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-100"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    @click.self="$store.app.about = false"
+    @keydown.escape.window="$store.app.about = false"
+    class="modal-overlay">
+    <div
+      @click.stop
+      x-transition:enter="transition ease-out duration-150"
+      x-transition:enter-start="opacity-0 translate-y-4"
+      x-transition:enter-end="opacity-100 translate-y-0"
+      class="modal-card about-modal">
+      <h2 class="about-modal-title" x-text="$store.app.t.aboutTitle"></h2>
+      <p class="about-modal-body" x-text="$store.app.t.aboutBody"></p>
+      <p class="about-modal-body about-modal-offline" x-text="$store.app.t.aboutOffline"></p>
+    </div>
+  </div>
+
+  <!-- Add Modal -->
+  <div
+    x-show="$store.app.modal"
+    x-transition:enter="transition ease-out duration-150"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-100"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    @click.self="$store.app.closeModal()"
+    @keydown.escape.window="$store.app.closeModal()"
+    class="modal-overlay">
+
+    <div
+      @click.stop
+      x-transition:enter="transition ease-out duration-150"
+      x-transition:enter-start="opacity-0 translate-y-4"
+      x-transition:enter-end="opacity-100 translate-y-0"
+      class="modal-card">
+      <input
+        id="task-input"
+        x-model="$store.app.newTitle"
+        @keydown.enter="$store.app.addTask()"
+        @keydown.escape="$store.app.closeModal()"
+        type="text"
+        :placeholder="$store.app.t.addPlaceholder"
+        maxlength="100"
+        autocomplete="off"
+        class="modal-input">
+    </div>
+  </div>
+
+  <!-- Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+    }
+  </script>
+
+  <script type="module" src="./app.js"></script>
+
+</body>
+</html>

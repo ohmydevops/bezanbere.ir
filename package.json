@@ -1,0 +1,16 @@
+{
+  "name": "bezanbere",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "postinstall": "mkdir -p src/public/fonts && cp node_modules/@fontsource/vazirmatn/files/vazirmatn-arabic-400-normal.woff2 src/public/fonts/"
+  },
+  "devDependencies": {
+    "@fontsource/vazirmatn": "^5.0.0",
+    "@tailwindcss/vite": "^4.3.0",
+    "alpinejs": "^3.14.0",
+    "vite": "^8.0.13"
+  }
+}
