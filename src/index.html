@@ -9,7 +9,6 @@
   <meta property="og:description" content="به جای مدیریت کارات، انجامشون بده.">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#deb887">
-  <link rel="manifest" href="./manifest.json">
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
   <meta property="og:image" content="./logo.png">
@@ -182,13 +181,6 @@
         class="modal-input">
     </div>
   </div>
-
-  <!-- Service Worker -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js')
-    }
-  </script>
 
   <script type="module" src="./app.js"></script>
 
