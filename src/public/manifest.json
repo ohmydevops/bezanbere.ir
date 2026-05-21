@@ -1,0 +1,25 @@
+{
+  "name": "بزن بره",
+  "short_name": "بزن بره",
+  "description": "ساده‌ترین Todo List ساخته شده به دست بشر تا به امروز",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#deb887",
+  "theme_color": "#deb887",
+  "lang": "fa",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

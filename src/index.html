@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>بزن بره</title>
-  <meta name="description" content="اپ ساده تسک با محدودیت ۵ تسک. بدون حساب. آفلاین.">
+  <meta name="description" content="ساده‌ترین Todo List ساخته شده به دست بشر تا به امروز">
   <meta property="og:title" content="بزن بره">
-  <meta property="og:description" content="به جای مدیریت کارات، انجامشون بده.">
+  <meta property="og:description" content="ساده‌ترین Todo List ساخته شده به دست بشر تا به امروز">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#deb887">
+  <link rel="manifest" href="/manifest.json">
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
   <meta property="og:image" content="./logo.png">
@@ -148,6 +149,17 @@
       class="modal-card about-modal">
       <h2 class="about-modal-title" x-text="$store.app.t.aboutTitle"></h2>
       <p class="about-modal-body" x-text="$store.app.t.aboutBody"></p>
+      <p class="about-modal-body opacity-60 text-sm mt-2" x-text="$store.app.t.offlineNote"></p>
+      <button
+        x-show="$store.app.installPrompt"
+        @click="$store.app.installApp()"
+        class="mt-4 w-full py-2 px-4 rounded-xl bg-sand-600 text-white text-sm font-medium hover:bg-sand-700 active:scale-95 transition">
+        <span x-text="$store.app.t.installBtn"></span>
+      </button>
+      <p class="mt-5 text-xs opacity-40 text-center">
+        ساخته شده با ❤️ توسط
+        <a href="https://github.com/ohmydevops/bezanbere.ir" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 hover:opacity-80">ohmydevops</a>
+      </p>
     </div>
   </div>
 
@@ -170,16 +182,27 @@
       x-transition:enter-start="opacity-0 translate-y-4"
       x-transition:enter-end="opacity-100 translate-y-0"
       class="modal-card">
-      <input
-        id="task-input"
-        x-model="$store.app.newTitle"
-        @keydown.enter="$store.app.addTask()"
-        @keydown.escape="$store.app.closeModal()"
-        type="text"
-        :placeholder="$store.app.t.addPlaceholder"
-        maxlength="100"
-        autocomplete="off"
-        class="modal-input">
+      <div class="flex items-center gap-2">
+        <input
+          id="task-input"
+          x-model="$store.app.newTitle"
+          @keydown.enter="$store.app.addTask()"
+          @keydown.escape="$store.app.closeModal()"
+          type="text"
+          :placeholder="$store.app.t.addPlaceholder"
+          maxlength="100"
+          autocomplete="off"
+          class="modal-input flex-1">
+        <button
+          @click="$store.app.addTask()"
+          :disabled="!$store.app.newTitle.trim()"
+          class="lg:hidden flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-xl bg-sand-600 text-white disabled:opacity-30 active:scale-95 transition"
+          :aria-label="$store.app.t.addTask">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+        </button>
+      </div>
     </div>
   </div>
 
