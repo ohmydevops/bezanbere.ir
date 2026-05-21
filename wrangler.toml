@@ -1,5 +1,13 @@
 name = "bezanbere"
 compatibility_date = "2026-05-20"
 
+routes = [
+  { pattern = "bezanbere.ir", custom_domain = true },
+  { pattern = "www.bezanbere.ir", custom_domain = true },
+]
+
+[observability]
+enabled = true
+
 [assets]
 directory = "./dist"
