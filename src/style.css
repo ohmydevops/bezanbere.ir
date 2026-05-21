@@ -31,7 +31,7 @@
 
 @layer components {
   .app-body        { @apply bg-sand-300 dark:bg-sand-950 min-h-dvh transition-colors duration-200 flex justify-center; }
-  .app-frame       { @apply w-full max-w-sm min-h-dvh relative flex flex-col; }
+  .app-frame       { @apply w-full max-w-2xl min-h-dvh relative flex flex-col; }
   .app-header      { @apply flex items-center justify-between px-6 pt-10 pb-4; }
   .app-title       { @apply text-xl font-bold text-sand-900 dark:text-sand-100; }
   .theme-btn       { @apply w-10 h-10 flex items-center justify-center rounded-full text-sand-700 hover:bg-sand-200 dark:hover:bg-sand-800 transition-colors; }
