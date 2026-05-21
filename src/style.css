@@ -42,7 +42,7 @@
   .task-list       { @apply space-y-3; }
   .task-card       { @apply flex items-center gap-4 bg-sand-50 dark:bg-sand-900 rounded-2xl px-5 py-4 shadow-sm transition-opacity duration-500; }
   .task-check      { @apply w-6 h-6 rounded-full border-2 border-sand-400 dark:border-sand-600 flex-shrink-0 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors; }
-  .task-title      { @apply flex-1 text-base leading-relaxed; }
+  .task-title      { @apply flex-1 text-base leading-relaxed min-w-0 break-all line-clamp-3; }
   .task-delete     { @apply text-sand-400 dark:text-sand-600 hover:text-red-400 transition-colors p-1 flex-shrink-0; }
   .blocked-msg     { @apply mt-8 text-center text-sand-700 dark:text-sand-500 text-sm select-none; }
   .fab             { @apply absolute bottom-8 right-6 w-14 h-14 bg-sand-800 dark:bg-sand-100 text-sand-50 dark:text-sand-900 rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-transform; }
