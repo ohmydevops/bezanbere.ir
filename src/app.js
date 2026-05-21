@@ -1,6 +1,12 @@
 import Alpine from 'alpinejs'
 import strings from './strings.json'
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+  })
+}
+
 const MAX_TASKS = 5
 const STORAGE_KEY = 'bezanbere-tasks'
 
@@ -20,6 +26,7 @@ Alpine.store('app', {
     about: false,
     newTitle: '',
     completing: [],
+    installPrompt: null,
 
     init() {
       const saved = localStorage.getItem('theme')
@@ -30,6 +37,13 @@ Alpine.store('app', {
       }
       this.applyTheme()
       this.tasks = loadTasks()
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault()
+        this.installPrompt = e
+      })
+      window.addEventListener('appinstalled', () => {
+        this.installPrompt = null
+      })
     },
 
     applyTheme() {
@@ -72,6 +86,13 @@ Alpine.store('app', {
       this.tasks = this.tasks.filter(t => t.id !== id)
       this.completing = this.completing.filter(i => i !== id)
       saveTasks(this.tasks)
+    },
+
+    async installApp() {
+      if (!this.installPrompt) return
+      this.installPrompt.prompt()
+      await this.installPrompt.userChoice
+      this.installPrompt = null
     },
   })
 
