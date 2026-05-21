@@ -1,7 +1,6 @@
 # بزن بره
 
-Minimal offline-first todo PWA. Max 5 tasks. No account. No backend.
-
+ساده‌ترین ToDo لیست ساخته شده به دست بشر تا به امرز
 
 **[bezanbere.ir](https://bezanbere.ir)**
 
