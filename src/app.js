@@ -49,6 +49,9 @@ Alpine.store('app', {
     modal: false,
     about: false,
     settings: false,
+    detail: false,
+    detailTask: null,
+    detailDraft: '',
     newTitle: '',
     completing: [],
     installPrompt: null,
@@ -157,7 +160,7 @@ Alpine.store('app', {
 
     addTask() {
       const title = this.newTitle.trim()
-      if (!title || this.tasks.length >= this.taskLimit) return
+      if (!title || title.length > 100 || this.tasks.length >= this.taskLimit) return
       this.tasks.push({ id: crypto.randomUUID(), title, createdAt: Date.now() })
       saveTasks(this.tasks)
       this.closeModal()
@@ -191,6 +194,41 @@ Alpine.store('app', {
       this.installPrompt.prompt()
       await this.installPrompt.userChoice
       this.installPrompt = null
+    },
+
+    openDetail(task) {
+      this.detailTask = task
+      this.detailDraft = task.title
+      this.detail = true
+      setTimeout(() => document.getElementById('detail-title-input')?.focus(), 50)
+    },
+
+    closeDetail() {
+      this.detail = false
+      this.detailTask = null
+      this.detailDraft = ''
+    },
+
+    saveDetail() {
+      const title = this.detailDraft.trim()
+      if (!title || title.length > 100 || !this.detailTask) return
+      const task = this.tasks.find(t => t.id === this.detailTask.id)
+      if (task) {
+        task.title = title
+        saveTasks(this.tasks)
+      }
+      this.closeDetail()
+    },
+
+    toShamsiDate(ts) {
+      return new Intl.DateTimeFormat('fa-IR', {
+        calendar: 'persian',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }).format(new Date(ts))
     },
   })
 
