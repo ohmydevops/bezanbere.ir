@@ -46,7 +46,9 @@
   .task-delete     { @apply text-sand-400 dark:text-sand-600 hover:text-red-400 transition-colors p-1 shrink-0; }
   .remaining-msg   { @apply mt-4 text-center text-sand-700 dark:text-sand-500 text-sm select-none; }
   .blocked-msg     { @apply mt-8 text-center text-sand-700 dark:text-sand-500 text-sm select-none; }
-  .fab             { @apply absolute bottom-8 right-6 w-14 h-14 bg-sand-800 dark:bg-sand-100 text-sand-50 dark:text-sand-900 rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-transform; }
+  .footer-blur     { @apply fixed bottom-0 left-0 right-0 h-32 pointer-events-none; background: linear-gradient(to top, var(--color-sand-300) 0%, transparent 100%); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); mask-image: linear-gradient(to top, black 40%, transparent 100%); -webkit-mask-image: linear-gradient(to top, black 40%, transparent 100%); }
+  :where(.dark) .footer-blur { background: linear-gradient(to top, var(--color-sand-950) 0%, transparent 100%); }
+  .fab             { @apply fixed bottom-8 right-6 w-14 h-14 bg-sand-800 dark:bg-sand-100 text-sand-50 dark:text-sand-900 rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-transform; }
   .modal-overlay   { @apply fixed inset-0 bg-black/30 backdrop-blur-sm flex items-end justify-center p-4; }
   .modal-card      { @apply w-full max-w-sm bg-sand-50 dark:bg-sand-900 rounded-2xl px-6 py-5 shadow-xl; }
   .modal-input     { @apply w-full bg-transparent text-sand-900 dark:text-sand-100 placeholder-sand-500 dark:placeholder-sand-600 text-lg outline-none py-1; }
@@ -59,7 +61,7 @@
   .settings-number-input { @apply w-full rounded-xl border border-sand-300 dark:border-sand-700 bg-sand-50 dark:bg-sand-900 text-sand-900 dark:text-sand-100 px-3 py-2 text-sm outline-none; }
   .settings-help   { @apply text-xs text-sand-600 dark:text-sand-500; }
   .app-footer      { @apply pb-6 pt-2 flex justify-center; }
-  .about-btn       { @apply absolute bottom-8 left-6 inline-flex items-center gap-1.5 text-xs text-sand-600 dark:text-sand-500 border border-sand-400/40 dark:border-sand-700 rounded-full px-3 py-1.5 hover:bg-sand-200 dark:hover:bg-sand-800 hover:text-sand-800 dark:hover:text-sand-300 transition-colors; }
+  .about-btn       { @apply fixed bottom-8 left-6 inline-flex items-center gap-1.5 text-xs text-sand-600 dark:text-sand-500 border border-sand-400/40 dark:border-sand-700 rounded-full px-3 py-1.5 hover:bg-sand-200 dark:hover:bg-sand-800 hover:text-sand-800 dark:hover:text-sand-300 transition-colors; }
   .about-modal     { @apply space-y-3; }
   .about-modal-title   { @apply text-base font-bold text-sand-900 dark:text-sand-100; }
   .about-modal-body    { @apply text-sm text-sand-700 dark:text-sand-400 leading-relaxed; }
