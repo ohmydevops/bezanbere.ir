@@ -5,13 +5,16 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "test": "vitest run",
     "postinstall": "mkdir -p src/public/fonts && cp node_modules/@fontsource/vazirmatn/files/vazirmatn-arabic-400-normal.woff2 src/public/fonts/"
   },
   "devDependencies": {
     "@fontsource/vazirmatn": "^5.0.0",
     "@tailwindcss/vite": "^4.3.0",
     "alpinejs": "^3.14.0",
+    "jsdom": "^29.1.1",
     "vite": "^8.0.13",
-    "vite-plugin-singlefile": "^2.3.3"
+    "vite-plugin-singlefile": "^2.3.3",
+    "vitest": "^4.1.7"
   }
 }
