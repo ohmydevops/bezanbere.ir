@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bezanbere-v1.5'
+const CACHE_NAME = 'bezanbere-v1.4'
 const ASSETS = [
   '/',
   '/fonts/vazirmatn-arabic-400-normal.woff2',
@@ -32,6 +32,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return
   if (!event.request.url.startsWith(self.location.origin)) return
+  if (event.request.url.includes('/cdn-cgi/')) return
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
