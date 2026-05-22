@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bezanbere-v1.2'
+const CACHE_NAME = 'bezanbere-v1.3'
 const ASSETS = [
   '/',
   '/fonts/vazirmatn-arabic-400-normal.woff2',

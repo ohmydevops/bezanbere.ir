@@ -3,6 +3,8 @@
   "themeToggle": "تغییر تم",
   "emptyTitle": "خوش به حالت، هیچ کاری نداری گویا",
   "emptySubtitle": "حداکثر ۵ کار می‌تونی اضافه کنی.",
+  "remainingOne": "فقط ۱ کار دیگه می‌تونی اضافه کنی.",
+  "remainingMany": "هنوز {count} کار دیگه می‌تونی اضافه کنی.",
   "completeTask": "تموم شد",
   "deleteTask": "حذف",
   "blockedMessage": "یه کار تموم کن، بعد اضافه کن.",

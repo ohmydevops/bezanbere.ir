@@ -75,6 +75,16 @@ Alpine.store('app', {
       this.closeModal()
     },
 
+    remainingCount() {
+      return Math.max(0, MAX_TASKS - this.tasks.length)
+    },
+
+    remainingMessage() {
+      const remain = this.remainingCount()
+      if (remain === 1) return this.t.remainingOne
+      return this.t.remainingMany.replace('{count}', remain.toLocaleString('fa-IR'))
+    },
+
     deleteTask(id) {
       this.tasks = this.tasks.filter(t => t.id !== id)
       saveTasks(this.tasks)

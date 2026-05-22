@@ -122,6 +122,13 @@
       </template>
     </ul>
 
+    <div
+      x-show="$store.app.tasks.length > 0 && $store.app.tasks.length < 5"
+      x-transition
+      class="remaining-msg">
+      <span x-text="$store.app.remainingMessage()"></span>
+    </div>
+
     <!-- Blocked message -->
     <div
       x-show="$store.app.tasks.length >= 5"
