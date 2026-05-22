@@ -55,16 +55,12 @@
   <header class="app-header">
     <h1 class="app-title" x-text="$store.app.t.appTitle"></h1>
     <button
-      @click="$store.app.toggleTheme()"
+      @click="$store.app.openSettings()"
       class="theme-btn"
-      :aria-label="$store.app.t.themeToggle">
-      <!-- Moon (shown in light mode) -->
-      <svg x-show="$store.app.theme === 'light'" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
-      </svg>
-      <!-- Sun (shown in dark mode) -->
-      <svg x-show="$store.app.theme === 'dark'" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 7a5 5 0 100 10A5 5 0 0012 7z"/>
+      :aria-label="$store.app.t.settingsBtn">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.527-.94 3.31.842 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.527-.842 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.527.94-3.31-.842-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.527.842-3.31 2.37-2.37.996.613 2.296.07 2.572-1.065z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
       </svg>
     </button>
   </header>
@@ -77,7 +73,7 @@
       x-show="$store.app.tasks.length === 0"
       class="empty-state">
       <p class="empty-title" x-text="$store.app.t.emptyTitle"></p>
-      <p class="empty-subtitle" x-text="$store.app.t.emptySubtitle"></p>
+      <p class="empty-subtitle" x-text="$store.app.emptySubtitle()"></p>
     </div>
 
     <!-- Tasks -->
@@ -123,7 +119,7 @@
     </ul>
 
     <div
-      x-show="$store.app.tasks.length > 0 && $store.app.tasks.length < 5"
+      x-show="$store.app.tasks.length > 0 && $store.app.tasks.length < $store.app.taskLimit"
       x-transition
       class="remaining-msg">
       <span x-text="$store.app.remainingMessage()"></span>
@@ -131,7 +127,7 @@
 
     <!-- Blocked message -->
     <div
-      x-show="$store.app.tasks.length >= 5"
+      x-show="$store.app.tasks.length >= $store.app.taskLimit"
       x-transition
       class="blocked-msg">
       <span x-text="$store.app.t.blockedMessage"></span>
@@ -141,7 +137,7 @@
 
   <!-- Floating Add Button (absolute within app frame) -->
   <button
-    x-show="$store.app.tasks.length < 5"
+    x-show="$store.app.tasks.length < $store.app.taskLimit"
     x-transition:enter="transition ease-out duration-150"
     x-transition:enter-start="opacity-0 scale-90"
     x-transition:enter-end="opacity-100 scale-100"
@@ -162,6 +158,74 @@
   </button>
 
   </div><!-- /app frame -->
+
+  <!-- Settings Modal -->
+  <div
+    x-show="$store.app.settings"
+    x-transition:enter="transition ease-out duration-150"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-100"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    @click.self="$store.app.closeSettings()"
+    @keydown.escape.window="$store.app.closeSettings()"
+    class="modal-overlay">
+    <div
+      @click.stop
+      x-transition:enter="transition ease-out duration-150"
+      x-transition:enter-start="opacity-0 translate-y-4"
+      x-transition:enter-end="opacity-100 translate-y-0"
+      class="modal-card settings-modal">
+      <h2 class="about-modal-title" x-text="$store.app.t.settingsTitle"></h2>
+
+      <div class="settings-group">
+        <p class="settings-label" x-text="$store.app.t.themeSetting"></p>
+        <div class="settings-options">
+          <button
+            @click="$store.app.setThemeMode('light')"
+            :class="$store.app.themeMode === 'light' ? 'settings-option-active' : ''"
+            class="settings-option"
+            type="button"
+            x-text="$store.app.t.themeLight">
+          </button>
+          <button
+            @click="$store.app.setThemeMode('dark')"
+            :class="$store.app.themeMode === 'dark' ? 'settings-option-active' : ''"
+            class="settings-option"
+            type="button"
+            x-text="$store.app.t.themeDark">
+          </button>
+          <button
+            @click="$store.app.setThemeMode('system')"
+            :class="$store.app.themeMode === 'system' ? 'settings-option-active' : ''"
+            class="settings-option"
+            type="button"
+            x-text="$store.app.t.themeSystem">
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <p class="settings-label" x-text="$store.app.taskLimitTitle()"></p>
+        <input
+          type="number"
+          dir="ltr"
+          inputmode="numeric"
+          class="settings-number-input"
+          :min="$store.app.taskLimitMin()"
+          max="20"
+          x-model="$store.app.taskLimitDraft"
+          @blur="$store.app.applyTaskLimit($event.target)"
+          @keydown.enter.prevent="$store.app.applyTaskLimit($event.target)">
+        <p
+          x-show="$store.app.tasks.length > 0"
+          class="settings-help"
+          x-text="$store.app.t.taskLimitHint.replace('{count}', $store.app.toFaNumber($store.app.tasks.length))">
+        </p>
+      </div>
+    </div>
+  </div>
 
   <!-- About Modal -->
   <div
@@ -230,7 +294,7 @@
         <button
           @click="$store.app.addTask()"
           :disabled="!$store.app.newTitle.trim()"
-          class="lg:hidden flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-xl bg-sand-600 text-white disabled:opacity-30 active:scale-95 transition"
+          class="lg:hidden shrink-0 w-11 h-11 flex items-center justify-center rounded-xl bg-sand-600 text-white disabled:opacity-30 active:scale-95 transition"
           :aria-label="$store.app.t.addTask">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 19l-7-7 7-7"/>

@@ -8,7 +8,14 @@
 
 ## Storage
 - Tasks → `localStorage` (`bezanbere-tasks`)
-- Theme → `localStorage` (`theme`)
+- Theme mode → `localStorage` (`bezanbere-theme-mode`)
+- Task limit → `localStorage` (`bezanbere-task-limit`)
+
+## Runtime Behavior
+- Theme mode supports `light`, `dark`, and `system`
+- System mode tracks OS color-scheme changes via `matchMedia`
+- Task limit is clamped to `[currentTaskCount, 20]` and defaults to `5`
+- Settings input is numeric (`type=number`) and uses `dir="ltr"` for stable number entry
 
 ## Offline / PWA
 - Service worker caches all static assets on first load (cache-first)
