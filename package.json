@@ -16,5 +16,8 @@
     "vite": "^8.0.13",
     "vite-plugin-singlefile": "^2.3.3",
     "vitest": "^4.1.7"
+  },
+  "dependencies": {
+    "sortablejs": "^1.15.7"
   }
 }
