@@ -9,12 +9,18 @@ import {
   toShamsiDate,
   taskLimitMin,
   remainingCount,
+  loadHistory,
+  saveHistory,
+  pruneOldHistory,
   DEFAULT_TASK_LIMIT,
   MAX_TASK_LIMIT,
   TASK_CHAR_LIMIT,
+  HISTORY_MAX_MONTHS,
+  HISTORY_PAGE_SIZE,
   STORAGE_KEY,
   THEME_MODE_KEY,
   TASK_LIMIT_KEY,
+  HISTORY_KEY,
 } from './utils.js'
 
 beforeEach(() => {
@@ -208,5 +214,89 @@ describe('TASK_CHAR_LIMIT', () => {
   it('title at 101 chars is invalid', () => {
     const title = 'a'.repeat(101)
     expect(title.length > TASK_CHAR_LIMIT).toBe(true)
+  })
+})
+
+// ─── loadHistory / saveHistory ───────────────────────────────────────────────
+
+describe('loadHistory', () => {
+  it('returns empty array when nothing is stored', () => {
+    expect(loadHistory()).toEqual([])
+  })
+
+  it('returns parsed history from localStorage', () => {
+    const history = [{ id: '1', title: 'done', createdAt: 1000, completedAt: 2000 }]
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history))
+    expect(loadHistory()).toEqual(history)
+  })
+
+  it('returns empty array when stored value is invalid JSON', () => {
+    localStorage.setItem(HISTORY_KEY, 'not-json')
+    expect(loadHistory()).toEqual([])
+  })
+})
+
+describe('saveHistory', () => {
+  it('persists history to localStorage', () => {
+    const history = [{ id: '1', title: 'done', createdAt: 1000, completedAt: 2000 }]
+    saveHistory(history)
+    expect(JSON.parse(localStorage.getItem(HISTORY_KEY))).toEqual(history)
+  })
+
+  it('round-trips through loadHistory', () => {
+    const history = [
+      { id: 'a', title: 'task one', createdAt: 1000, completedAt: 1500 },
+      { id: 'b', title: 'task two', createdAt: 2000, completedAt: 2500 },
+    ]
+    saveHistory(history)
+    expect(loadHistory()).toEqual(history)
+  })
+})
+
+// ─── pruneOldHistory ─────────────────────────────────────────────────────────
+
+describe('pruneOldHistory', () => {
+  it('keeps entries within 6 months', () => {
+    const recent = { id: '1', title: 'recent', createdAt: Date.now(), completedAt: Date.now() }
+    expect(pruneOldHistory([recent])).toEqual([recent])
+  })
+
+  it('removes entries older than 6 months', () => {
+    const old = {
+      id: '2',
+      title: 'old',
+      createdAt: Date.now() - (HISTORY_MAX_MONTHS * 30 + 1) * 24 * 60 * 60 * 1000,
+      completedAt: Date.now(),
+    }
+    expect(pruneOldHistory([old])).toEqual([])
+  })
+
+  it('keeps mixed entries correctly', () => {
+    const recent = { id: '1', title: 'recent', createdAt: Date.now(), completedAt: Date.now() }
+    const old = {
+      id: '2',
+      title: 'old',
+      createdAt: Date.now() - (HISTORY_MAX_MONTHS * 30 + 1) * 24 * 60 * 60 * 1000,
+      completedAt: Date.now(),
+    }
+    expect(pruneOldHistory([recent, old])).toEqual([recent])
+  })
+
+  it('returns empty array when given empty array', () => {
+    expect(pruneOldHistory([])).toEqual([])
+  })
+})
+
+// ─── HISTORY constants ───────────────────────────────────────────────────────
+
+describe('HISTORY_MAX_MONTHS', () => {
+  it('is 6', () => {
+    expect(HISTORY_MAX_MONTHS).toBe(6)
+  })
+})
+
+describe('HISTORY_PAGE_SIZE', () => {
+  it('is 5', () => {
+    expect(HISTORY_PAGE_SIZE).toBe(5)
   })
 })

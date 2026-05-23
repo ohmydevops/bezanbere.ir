@@ -4,6 +4,9 @@ export const MAX_TASK_LIMIT = 20
 export const THEME_MODE_KEY = 'bezanbere-theme-mode'
 export const TASK_LIMIT_KEY = 'bezanbere-task-limit'
 export const TASK_CHAR_LIMIT = 100
+export const HISTORY_KEY = 'bezanbere-history'
+export const HISTORY_MAX_MONTHS = 6
+export const HISTORY_PAGE_SIZE = 5
 
 export function loadTasks() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') } catch { return [] }
@@ -50,4 +53,17 @@ export function taskLimitMin(tasks) {
 
 export function remainingCount(tasks, taskLimit) {
   return Math.max(0, taskLimit - tasks.length)
+}
+
+export function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]') } catch { return [] }
+}
+
+export function saveHistory(history) {
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history))
+}
+
+export function pruneOldHistory(history) {
+  const cutoff = Date.now() - HISTORY_MAX_MONTHS * 30 * 24 * 60 * 60 * 1000
+  return history.filter(h => h.createdAt >= cutoff)
 }

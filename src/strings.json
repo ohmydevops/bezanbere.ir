@@ -25,5 +25,12 @@
   "taskAddedAt": "اضافه شده در",
   "saveTask": "ذخیره",
   "cancelBtn": "انصراف",
-  "charLimitError": "متن نمی‌تونه بیشتر از ۱۰۰ کاراکتر باشه."
+  "charLimitError": "متن نمی‌تونه بیشتر از ۱۰۰ کاراکتر باشه.",
+  "historyBtn": "تاریخچه",
+  "historyTitle": "تاریخچه کارها",
+  "historyEmpty": "هنوز هیچ کاری تموم نکردی!",
+  "historyCompletedAt": "تموم شده در",
+  "historyPageLabel": "صفحه {current} از {total}",
+  "historyPrev": "قبلی",
+  "historyNext": "بعدی"
 }

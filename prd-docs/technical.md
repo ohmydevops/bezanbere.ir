@@ -9,6 +9,7 @@
 ## UI
 - Persian (Farsi), RTL, Vazirmatn font
 - Settings modal (gear icon in header)
+- History modal (clock icon in header, alongside settings)
 - Theme modes: Light / Dark / System
 - Task limit input in Settings (numeric, LTR for stable number entry)
 - Task detail modal: editable title textarea + Shamsi creation date
@@ -17,12 +18,18 @@
 
 ## Storage
 - Tasks → `localStorage` (`bezanbere-tasks`)
+- History → `localStorage` (`bezanbere-history`)
 - Theme mode → `localStorage` (`bezanbere-theme-mode`)
 - Task limit → `localStorage` (`bezanbere-task-limit`)
 
 ## Task Schema
 ```json
 { "id": "<uuid>", "title": "string (max 100 chars)", "createdAt": 1234567890000 }
+```
+
+## History Schema
+```json
+{ "id": "<uuid>", "title": "string", "createdAt": 1234567890000, "completedAt": 1234567890000 }
 ```
 
 ## Runtime Behavior
@@ -33,6 +40,9 @@
 - Task detail modal opens on title click; allows editing the title (textarea, 100 char limit)
 - Shamsi (Persian calendar) date+time formatted via native `Intl.DateTimeFormat` with `ca-persian` — no external library
 - Character limit validation is soft (no `maxlength` attribute): error shown and save blocked when > 100 chars
+- History pruning: runs every 5 seconds via `setInterval`; removes entries where `createdAt` is older than 6 months; only writes to storage when entries are actually removed
+- History pagination: 5 items per page, reverse chronological order (newest completed first)
+- Add and About buttons use `absolute` positioning within the `app-frame` container (instead of `fixed`), so they remain inside the phone-width frame on desktop
 
 ## Offline / PWA
 - Service worker caches all static assets on first load (cache-first)
