@@ -1,5 +1,6 @@
 import Alpine from 'alpinejs'
-import Sortable from 'sortablejs'
+import Sort from '@alpinejs/sort'
+Alpine.plugin(Sort)
 import strings from './strings.json'
 import {
   STORAGE_KEY,
@@ -49,7 +50,7 @@ Alpine.store('app', {
     completing: [],
     installPrompt: null,
     systemThemeMedia: null,
-    sortable: null,
+
 
     init() {
       this.themeMode = loadThemeMode()
@@ -59,7 +60,6 @@ Alpine.store('app', {
       this.applyTheme()
 
       this.tasks = loadTasks()
-      this.setupTaskSortable()
       this.commitTaskLimit(clampTaskLimit(this.taskLimit, this.taskLimitMin()))
 
       this.history = loadHistory()
@@ -166,27 +166,12 @@ Alpine.store('app', {
       this.closeModal()
     },
 
-    setupTaskSortable() {
-      const taskList = document.getElementById('task-list')
-      if (!taskList || this.sortable) return
-
-      this.sortable = new Sortable(taskList, {
-        animation: 180,
-        handle: '.task-drag-handle',
-        draggable: '.task-card',
-        ghostClass: 'task-card-ghost',
-        chosenClass: 'task-card-chosen',
-        dragClass: 'task-card-dragging',
-        onEnd: (event) => this.reorderTasks(event.oldIndex, event.newIndex),
-      })
-    },
-
-    reorderTasks(oldIndex, newIndex) {
-      if (oldIndex == null || newIndex == null || oldIndex === newIndex) return
+    sortTasks(itemId, newPosition) {
+      const oldPosition = this.tasks.findIndex(t => t.id === itemId)
+      if (oldPosition === -1 || oldPosition === newPosition) return
       const reordered = [...this.tasks]
-      const [moved] = reordered.splice(oldIndex, 1)
-      if (!moved) return
-      reordered.splice(newIndex, 0, moved)
+      const [moved] = reordered.splice(oldPosition, 1)
+      reordered.splice(newPosition, 0, moved)
       this.tasks = reordered
       saveTasks(this.tasks)
     },

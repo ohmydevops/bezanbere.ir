@@ -90,9 +90,10 @@
     </div>
 
     <!-- Tasks -->
-    <ul id="task-list" class="task-list">
+    <ul id="task-list" class="task-list" x-sort="$store.app.sortTasks($item, $position)" x-sort:config="{ ghostClass: 'task-card-ghost', dragClass: 'task-card-drag' }">
       <template x-for="task in $store.app.tasks" :key="task.id">
         <li
+          x-sort:item="task.id"
           x-data="{ startX: 0, dragX: 0 }"
           x-transition:enter="transition ease-out duration-150"
           x-transition:enter-start="opacity-0 -translate-y-1"
@@ -107,6 +108,7 @@
           <!-- Drag handle -->
           <button
             type="button"
+            x-sort:handle
             class="task-drag-handle"
             :aria-label="$store.app.t.dragTask"
             :title="$store.app.t.dragTask"
