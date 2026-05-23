@@ -7,6 +7,7 @@ import {
   THEME_MODE_KEY,
   TASK_LIMIT_KEY,
   TASK_CHAR_LIMIT,
+  HISTORY_PAGE_SIZE,
   loadTasks,
   saveTasks,
   loadThemeMode,
@@ -16,6 +17,9 @@ import {
   toShamsiDate,
   taskLimitMin,
   remainingCount,
+  loadHistory,
+  saveHistory,
+  pruneOldHistory,
 } from './utils.js'
 
 if ('serviceWorker' in navigator) {
@@ -34,6 +38,9 @@ Alpine.store('app', {
     modal: false,
     about: false,
     settings: false,
+    history: [],
+    historyModal: false,
+    historyPage: 1,
     detail: false,
     detailTask: null,
     detailDraft: '',
@@ -51,6 +58,10 @@ Alpine.store('app', {
 
       this.tasks = loadTasks()
       this.commitTaskLimit(clampTaskLimit(this.taskLimit, this.taskLimitMin()))
+
+      this.history = loadHistory()
+      this.pruneHistory()
+      setInterval(() => this.pruneHistory(), 5000)
 
       this.systemThemeMedia.addEventListener('change', () => {
         if (this.themeMode !== 'system') return
@@ -170,6 +181,11 @@ Alpine.store('app', {
     async completeTask(id) {
       this.completing = [...this.completing, id]
       await new Promise(r => setTimeout(r, 500))
+      const task = this.tasks.find(t => t.id === id)
+      if (task) {
+        this.history.push({ ...task, completedAt: Date.now() })
+        saveHistory(this.history)
+      }
       this.tasks = this.tasks.filter(t => t.id !== id)
       this.completing = this.completing.filter(i => i !== id)
       saveTasks(this.tasks)
@@ -208,6 +224,41 @@ Alpine.store('app', {
 
     toShamsiDate(ts) {
       return toShamsiDate(ts)
+    },
+
+    pruneHistory() {
+      const pruned = pruneOldHistory(this.history)
+      if (pruned.length !== this.history.length) {
+        this.history = pruned
+        saveHistory(this.history)
+      }
+    },
+
+    openHistory() {
+      this.historyPage = 1
+      this.historyModal = true
+    },
+
+    closeHistory() {
+      this.historyModal = false
+    },
+
+    historyTotalPages() {
+      return Math.max(1, Math.ceil(this.history.length / HISTORY_PAGE_SIZE))
+    },
+
+    historyPageItems() {
+      const reversed = [...this.history].reverse()
+      const start = (this.historyPage - 1) * HISTORY_PAGE_SIZE
+      return reversed.slice(start, start + HISTORY_PAGE_SIZE)
+    },
+
+    historyPrevPage() {
+      if (this.historyPage > 1) this.historyPage--
+    },
+
+    historyNextPage() {
+      if (this.historyPage < this.historyTotalPages()) this.historyPage++
     },
   })
 

@@ -23,3 +23,6 @@ Bezan Bere exists for the opposite reason: you have a few things to do today, yo
 | 10 | Use the app fully offline after the first load |
 | 11 | Install the app to my home screen (PWA) |
 | 12 | Get a validation error if my task text exceeds 100 characters |
+| 13 | View a history of completed tasks via the clock icon in the header |
+| 14 | Browse completed tasks paginated 5 per page in the history modal |
+| 15 | Trust that history older than 6 months is automatically cleaned up |
