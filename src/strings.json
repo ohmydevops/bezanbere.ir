@@ -32,5 +32,6 @@
   "historyCompletedAt": "تموم شده در",
   "historyPageLabel": "صفحه {current} از {total}",
   "historyPrev": "قبلی",
-  "historyNext": "بعدی"
+  "historyNext": "بعدی",
+  "historyClearAll": "پاک‌کردن تاریخچه"
 }

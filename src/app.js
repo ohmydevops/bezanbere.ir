@@ -227,6 +227,12 @@ Alpine.store('app', {
       return toShamsiDate(ts)
     },
 
+    clearHistory() {
+      this.history = []
+      saveHistory(this.history)
+      this.historyPage = 1
+    },
+
     pruneHistory() {
       const pruned = pruneOldHistory(this.history)
       if (pruned.length !== this.history.length) {
