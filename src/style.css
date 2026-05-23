@@ -41,11 +41,6 @@
   .empty-subtitle  { @apply text-sand-600 text-sm mt-1; }
   .task-list       { @apply space-y-3; }
   .task-card       { @apply flex items-center gap-4 bg-sand-50 dark:bg-sand-900 rounded-2xl px-5 py-4 shadow-sm transition-opacity duration-500; }
-  .task-drag-handle { @apply text-sand-400 dark:text-sand-600 hover:text-sand-600 dark:hover:text-sand-300 transition-colors p-1 cursor-grab active:cursor-grabbing touch-none shrink-0; }
-  .task-card-ghost { @apply opacity-40 border-2 border-dashed border-sand-400 dark:border-sand-600; }
-  .task-card-ghost > * { @apply invisible; }
-  .task-card-drag { @apply opacity-80 shadow-lg; }
-  .task-card-drag > * { @apply invisible; }
   .task-check      { @apply w-6 h-6 rounded-full border-2 border-sand-400 dark:border-sand-600 shrink-0 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors; }
   .task-title      { @apply flex-1 text-base leading-relaxed min-w-0 line-clamp-3; }
   .task-delete     { @apply text-sand-400 dark:text-sand-600 hover:text-red-400 transition-colors p-1 shrink-0; }

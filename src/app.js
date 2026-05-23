@@ -1,6 +1,4 @@
 import Alpine from 'alpinejs'
-import Sort from '@alpinejs/sort'
-Alpine.plugin(Sort)
 import strings from './strings.json'
 import {
   STORAGE_KEY,
@@ -164,16 +162,6 @@ Alpine.store('app', {
       this.tasks.push({ id: crypto.randomUUID(), title, createdAt: Date.now() })
       saveTasks(this.tasks)
       this.closeModal()
-    },
-
-    sortTasks(itemId, newPosition) {
-      const oldPosition = this.tasks.findIndex(t => t.id === itemId)
-      if (oldPosition === -1 || oldPosition === newPosition) return
-      const reordered = [...this.tasks]
-      const [moved] = reordered.splice(oldPosition, 1)
-      reordered.splice(newPosition, 0, moved)
-      this.tasks = reordered
-      saveTasks(this.tasks)
     },
 
     remainingCount() {
