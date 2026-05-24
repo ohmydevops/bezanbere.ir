@@ -3,6 +3,9 @@ export const DEFAULT_TASK_LIMIT = 5
 export const MAX_TASK_LIMIT = 20
 export const THEME_MODE_KEY = 'bezanbere-theme-mode'
 export const TASK_LIMIT_KEY = 'bezanbere-task-limit'
+export const GITHUB_TOKEN_KEY = 'bezanbere-github-token'
+export const GITHUB_USER_KEY = 'bezanbere-github-user'
+export const GITHUB_REPO_KEY = 'bezanbere-github-repo'
 export const TASK_CHAR_LIMIT = 100
 export const HISTORY_KEY = 'bezanbere-history'
 export const HISTORY_MAX_MONTHS = 6
@@ -61,6 +64,19 @@ export function loadHistory() {
 
 export function saveHistory(history) {
   localStorage.setItem(HISTORY_KEY, JSON.stringify(history))
+}
+
+export function loadSessionJSON(key, fallback) {
+  try {
+    const raw = sessionStorage.getItem(key)
+    return raw ? JSON.parse(raw) : fallback
+  } catch {
+    return fallback
+  }
+}
+
+export function saveSessionJSON(key, value) {
+  sessionStorage.setItem(key, JSON.stringify(value))
 }
 
 export function pruneOldHistory(history) {

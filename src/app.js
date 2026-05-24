@@ -20,7 +20,25 @@ import {
   loadHistory,
   saveHistory,
   pruneOldHistory,
+  GITHUB_TOKEN_KEY,
+  GITHUB_USER_KEY,
+  GITHUB_REPO_KEY,
+  loadSessionJSON,
+  saveSessionJSON,
 } from './utils.js'
+import {
+  startGitHubOAuth,
+  readOAuthCallbackParams,
+  clearOAuthCallbackParams,
+  exchangeGitHubToken,
+} from './services/oauth.js'
+import { getViewer } from './services/github.js'
+import { syncTodos } from './services/sync.js'
+
+const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID || ''
+const GITHUB_REDIRECT_URI = import.meta.env.VITE_GITHUB_REDIRECT_URI || window.location.origin
+const GITHUB_OAUTH_ENDPOINT =
+  import.meta.env.VITE_GITHUB_OAUTH_ENDPOINT || `${window.location.origin}/oauth/github`
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -48,6 +66,13 @@ Alpine.store('app', {
     completing: [],
     installPrompt: null,
     systemThemeMedia: null,
+    githubToken: null,
+    githubUser: null,
+    githubRepoName: '',
+    githubStatus: '',
+    githubError: '',
+    githubSyncing: false,
+    githubLastSync: null,
 
 
     init() {
@@ -63,6 +88,9 @@ Alpine.store('app', {
       this.history = loadHistory()
       this.pruneHistory()
       setInterval(() => this.pruneHistory(), 5000)
+
+      this.restoreGitHubSession()
+      this.handleOAuthCallback()
 
       this.systemThemeMedia.addEventListener('change', () => {
         if (this.themeMode !== 'system') return
@@ -266,6 +294,123 @@ Alpine.store('app', {
 
     historyNextPage() {
       if (this.historyPage < this.historyTotalPages()) this.historyPage++
+    },
+
+    restoreGitHubSession() {
+      this.githubToken = loadSessionJSON(GITHUB_TOKEN_KEY, null)
+      this.githubUser = loadSessionJSON(GITHUB_USER_KEY, null)
+      this.githubRepoName = loadSessionJSON(GITHUB_REPO_KEY, '')
+
+      if (this.githubToken?.access_token && !this.githubUser) {
+        this.fetchGitHubUser()
+      }
+    },
+
+    async fetchGitHubUser() {
+      try {
+        const viewer = await getViewer(this.githubToken.access_token)
+        this.githubUser = viewer
+        saveSessionJSON(GITHUB_USER_KEY, viewer)
+        this.githubStatus = this.t.githubConnectedAs.replace('{user}', viewer.login)
+      } catch (error) {
+        this.githubError = error?.message || this.t.githubGenericError
+        this.clearGitHubSession()
+      }
+    },
+
+    clearGitHubSession() {
+      this.githubToken = null
+      this.githubUser = null
+      this.githubStatus = ''
+      this.githubLastSync = null
+      sessionStorage.removeItem(GITHUB_TOKEN_KEY)
+      sessionStorage.removeItem(GITHUB_USER_KEY)
+    },
+
+    disconnectGitHub() {
+      this.githubRepoName = ''
+      this.githubError = ''
+      sessionStorage.removeItem(GITHUB_REPO_KEY)
+      this.clearGitHubSession()
+    },
+
+    async handleOAuthCallback() {
+      const { code, state, error } = readOAuthCallbackParams()
+      if (!code && !error) return
+
+      if (error) {
+        this.githubError = this.t.githubOAuthDenied
+        clearOAuthCallbackParams()
+        return
+      }
+
+      this.githubError = ''
+      this.githubStatus = this.t.githubConnecting
+
+      try {
+        const payload = await exchangeGitHubToken({
+          endpoint: GITHUB_OAUTH_ENDPOINT,
+          code,
+          expectedState: state,
+        })
+        this.githubToken = payload
+        saveSessionJSON(GITHUB_TOKEN_KEY, payload)
+        await this.fetchGitHubUser()
+      } catch (err) {
+        this.githubError = err?.message || this.t.githubGenericError
+      } finally {
+        clearOAuthCallbackParams()
+      }
+    },
+
+    startGitHubOAuth() {
+      if (!GITHUB_CLIENT_ID) {
+        this.githubError = this.t.githubMissingClientId
+        return
+      }
+      this.githubError = ''
+      startGitHubOAuth({
+        clientId: GITHUB_CLIENT_ID,
+        redirectUri: GITHUB_REDIRECT_URI,
+      })
+    },
+
+    setGitHubRepoName(value) {
+      this.githubRepoName = value
+      saveSessionJSON(GITHUB_REPO_KEY, value)
+    },
+
+    githubCanSync() {
+      return Boolean(this.githubToken?.access_token && this.githubRepoName.trim())
+    },
+
+    async syncWithGitHub() {
+      if (!this.githubToken?.access_token) {
+        this.githubError = this.t.githubNotConnected
+        return
+      }
+      if (!this.githubRepoName.trim()) {
+        this.githubError = this.t.githubRepoRequired
+        return
+      }
+
+      this.githubSyncing = true
+      this.githubError = ''
+      this.githubStatus = this.t.githubSyncing
+
+      try {
+        await syncTodos({
+          token: this.githubToken.access_token,
+          repoName: this.githubRepoName.trim(),
+          todos: this.tasks,
+        })
+        this.githubLastSync = Date.now()
+        this.githubStatus = this.t.githubSynced
+      } catch (err) {
+        this.githubError = err?.message || this.t.githubGenericError
+      } finally {
+        this.githubSyncing = false
+      }
     },
   })
 
