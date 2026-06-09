@@ -1,5 +1,6 @@
 name = "bezanbereir"
 compatibility_date = "2026-05-20"
+main = "worker/index.js"
 
 routes = [
   { pattern = "bezanbere.ir", custom_domain = true },
@@ -11,3 +12,9 @@ enabled = true
 
 [assets]
 directory = "./dist"
+
+[vars]
+GITHUB_CLIENT_ID = ""
+GITHUB_REDIRECT_URI = ""
+GITHUB_CLIENT_SECRET = ""
+ALLOWED_ORIGIN = ""

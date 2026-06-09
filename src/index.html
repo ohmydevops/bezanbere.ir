@@ -247,6 +247,69 @@
           x-text="$store.app.t.taskLimitHint.replace('{count}', $store.app.toFaNumber($store.app.tasks.length))">
         </p>
       </div>
+
+      <hr class="border-sand-200 dark:border-sand-800">
+
+      <div class="settings-group">
+        <p class="settings-label" x-text="$store.app.t.githubTitle"></p>
+        <div class="settings-options">
+          <button
+            @click="$store.app.startGitHubOAuth()"
+            class="settings-option"
+            type="button"
+            x-text="$store.app.githubUser ? $store.app.t.githubReconnect : $store.app.t.githubConnect">
+          </button>
+          <button
+            @click="$store.app.syncWithGitHub()"
+            :disabled="!$store.app.githubCanSync() || $store.app.githubSyncing"
+            class="settings-option"
+            type="button"
+            x-text="$store.app.githubSyncing ? $store.app.t.githubSyncing : $store.app.t.githubSync">
+          </button>
+          <button
+            @click="$store.app.disconnectGitHub()"
+            :disabled="!$store.app.githubUser"
+            class="settings-option"
+            type="button"
+            x-text="$store.app.t.githubDisconnect">
+          </button>
+        </div>
+
+        <div class="github-settings">
+          <label class="settings-label" x-text="$store.app.t.githubRepoLabel"></label>
+          <input
+            type="text"
+            dir="ltr"
+            class="settings-text-input"
+            :placeholder="$store.app.t.githubRepoPlaceholder"
+            x-model="$store.app.githubRepoName"
+            @input="$store.app.setGitHubRepoName($event.target.value)">
+          <p
+            x-show="$store.app.githubUser"
+            class="settings-help"
+            x-text="$store.app.t.githubConnectedAs.replace('{user}', $store.app.githubUser.login)">
+          </p>
+          <p
+            x-show="$store.app.githubLastSync"
+            class="settings-help"
+            x-text="$store.app.t.githubLastSync.replace('{time}', new Date($store.app.githubLastSync).toLocaleString('fa-IR'))">
+          </p>
+          <p
+            x-show="$store.app.githubStatus"
+            class="settings-help"
+            x-text="$store.app.githubStatus">
+          </p>
+          <p
+            class="settings-privacy"
+            x-text="$store.app.t.githubPrivacy">
+          </p>
+          <p
+            x-show="$store.app.githubError"
+            class="settings-error"
+            x-text="$store.app.githubError">
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 
